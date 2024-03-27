@@ -10,10 +10,10 @@ TcpListener server = new (IPAddress.Any, 6379);
 server.Start();
 
 string responseTxt = "+PONG\r\n";
-byte[] responseData = Encoding.UTF8.GetBytes(responseTxt);
+
 
 while(true){
-    Socket socket = server.AcceptSocket();
+    Socket socket = await server.AcceptSocketAsync();
    await Task.Run(()=>HandleMultipleConnection(socket));
 }
 
@@ -21,10 +21,22 @@ while(true){
 
 
 async void HandleMultipleConnection(Socket socket){
-    while(socket.Connected){
-    byte[] buffer = new byte[1024];
-    await socket.ReceiveAsync(buffer,SocketFlags.None);
-    await socket.SendAsync(responseData,SocketFlags.None);
+    try{
+        byte[] buffer = new byte[1024];
+        int byteRead = await socket.ReceiveAsync(buffer,SocketFlags.None);
+        string command = Encoding.UTF8.GetString(buffer,0,byteRead);
+        string[] parts = command.Split(" ");
+        string commandName = parts[0].ToUpper();
+
+        if(commandName == "Echo"){
+            string arguments = parts.Length>1? parts[1]:" ";
+            responseTxt = $"{arguments.Length}\r\n{arguments}\r\n";
+            await socket.SendAsync(Encoding.UTF8.GetBytes(responseTxt),SocketFlags.None);
+        }
+        socket.Shutdown(SocketShutdown.Both);
+        socket.Close();
+    }catch(Exception ex){
+        Console.WriteLine("Error handling cient: "+ex.Message);
     }
 }
 
