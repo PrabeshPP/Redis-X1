@@ -25,9 +25,8 @@ async void HandleMultipleConnection(Socket socket){
         byte[] buffer = new byte[1024];
         int byteRead = await socket.ReceiveAsync(buffer,SocketFlags.None);
         string command = Encoding.UTF8.GetString(buffer,0,byteRead);
-        Console.WriteLine(command);
         string[] parts = command.Split(" ");
-        string commandName = parts[0].ToUpper();
+        string commandName = parts[2].ToUpper();
 
         if(commandName == "Echo"){
             string arguments = parts.Length>1? parts[1]:" ";
