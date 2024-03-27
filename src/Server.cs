@@ -30,7 +30,7 @@ async void HandleMultipleConnection(Socket socket){
 
         if(commandName == "Echo"){
             string arguments = parts.Length>1? parts[1]:" ";
-            responseTxt = $"{arguments.Length}\r\n{arguments}\r\n";
+            responseTxt = $"+{arguments.Length}\r\n{arguments}\r\n";
             await socket.SendAsync(Encoding.UTF8.GetBytes(responseTxt),SocketFlags.None);
         }
         socket.Shutdown(SocketShutdown.Both);
