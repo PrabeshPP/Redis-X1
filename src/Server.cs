@@ -9,13 +9,14 @@ Console.WriteLine("Logs from your program will appear here!");
 TcpListener server = new TcpListener(IPAddress.Any, 6379);
 server.Start();
 Socket socket = server.AcceptSocket(); // wait for client
-byte[] requestData = new byte[1024];
-socket.Receive(requestData);
+
 
 string responseTxt = "+PONG\r\n";
 byte[] responseData = Encoding.UTF8.GetBytes(responseTxt);
-socket.Send(responseData);
-socket.Close();
 
-server.Stop();
+while(socket.Connected){
+    byte[] buffer = new byte[1024];
+    await socket.ReceiveAsync(buffer,SocketFlags.None);
+    await socket.SendAsync(responseData,SocketFlags.None);
+}
 
