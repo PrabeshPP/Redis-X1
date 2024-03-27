@@ -28,7 +28,7 @@ async void HandleMultipleConnection(Socket socket){
         string req = Encoding.UTF8.GetString(buffer,0,byteRead);
         List<string> command = RedisReqParser(req);
         Console.Write("Test Case Prabesh");
-        Console.WriteLine(command.ToString);
+        Console.WriteLine(command.ToString());
         // string commandName = parts[2].ToUpper();
 
         // if(commandName == "Echo"){
