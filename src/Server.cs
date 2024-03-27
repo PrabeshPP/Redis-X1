@@ -27,19 +27,22 @@ async void HandleMultipleConnection(Socket socket){
         int byteRead = await socket.ReceiveAsync(buffer,SocketFlags.None);
         string req = Encoding.UTF8.GetString(buffer,0,byteRead);
         List<string> command = RedisReqParser(req);
-        Console.Write("Test Case Prabesh");
-        foreach(string st in command){
-            Console.WriteLine(st);
-        }
-        // string commandName = parts[2].ToUpper();
 
-        // if(commandName == "Echo"){
-        //     string arguments = parts.Length>1? parts[1]:" ";
-        //     responseTxt = $"+{arguments.Length}\r\n{arguments}\r\n";
-        //     await socket.SendAsync(Encoding.UTF8.GetBytes(responseTxt),SocketFlags.None);
-        // }
-        // socket.Shutdown(SocketShutdown.Both);
-        // socket.Close();
+        if(command.Count == 0){
+            await socket.SendAsync(Encoding.UTF8.GetBytes(""),SocketFlags.None);
+        }
+        string cmd = command[0].ToLower();
+
+        if(cmd == "ping"){
+            await socket.SendAsync(Encoding.UTF8.GetBytes(responseTxt),SocketFlags.None);
+        }else if(cmd == "echo"){
+            string eTxt = $"{command[1].Length}\r\n"+command[1]+"\r\n";
+            await socket.SendAsync(Encoding.UTF8.GetBytes(eTxt),SocketFlags.None);
+        }
+        
+
+        socket.Shutdown(SocketShutdown.Both);
+        socket.Close();
     }catch(Exception ex){
         Console.WriteLine("Error handling cient: "+ex.Message);
     }
