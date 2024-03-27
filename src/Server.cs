@@ -1,3 +1,4 @@
+using System.Data;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -24,19 +25,27 @@ async void HandleMultipleConnection(Socket socket){
     try{
         byte[] buffer = new byte[1024];
         int byteRead = await socket.ReceiveAsync(buffer,SocketFlags.None);
-        string command = Encoding.UTF8.GetString(buffer,0,byteRead);
-        string[] parts = command.Split(" ");
-        string commandName = parts[2].ToUpper();
+        string req = Encoding.UTF8.GetString(buffer,0,byteRead);
+        List<string> command = RedisReqParser(req);
+        Console.Write("Test Case Prabesh");
+        Console.WriteLine(command.ToString);
+        // string commandName = parts[2].ToUpper();
 
-        if(commandName == "Echo"){
-            string arguments = parts.Length>1? parts[1]:" ";
-            responseTxt = $"+{arguments.Length}\r\n{arguments}\r\n";
-            await socket.SendAsync(Encoding.UTF8.GetBytes(responseTxt),SocketFlags.None);
-        }
-        socket.Shutdown(SocketShutdown.Both);
-        socket.Close();
+        // if(commandName == "Echo"){
+        //     string arguments = parts.Length>1? parts[1]:" ";
+        //     responseTxt = $"+{arguments.Length}\r\n{arguments}\r\n";
+        //     await socket.SendAsync(Encoding.UTF8.GetBytes(responseTxt),SocketFlags.None);
+        // }
+        // socket.Shutdown(SocketShutdown.Both);
+        // socket.Close();
     }catch(Exception ex){
         Console.WriteLine("Error handling cient: "+ex.Message);
     }
+}
+
+
+List<string> RedisReqParser(string request){
+    string[] strList = request.Split("\r\n");
+    return strList.ToList();
 }
 
