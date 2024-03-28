@@ -109,6 +109,9 @@ async void HandleMultipleConnection(Socket socket)
                     await socket.SendAsync(Encoding.UTF8.GetBytes(getStr.ToString()), SocketFlags.None);
                 }
 
+            }else if(cmd == "info"){
+                string infoStr = $"$11\r\nrole:master\r\n";
+                await socket.SendAsync(Encoding.UTF8.GetBytes(infoStr),SocketFlags.None);
             }
             else
             {
