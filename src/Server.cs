@@ -57,7 +57,8 @@ async void HandleMultipleConnection(Socket socket)
             {
                 string key = command[1];
                 string value = command[2];
-                if (cmd.Length > 3)
+                
+                if (command.Count > 3)
                 {
                     int timeOut = int.Parse(command[4]);
                     DateTime _expiryValue = DateTime.Now.AddMilliseconds(timeOut-1);
@@ -98,7 +99,7 @@ async void HandleMultipleConnection(Socket socket)
                 {
                     Console.WriteLine($"Current Time3:{DateTime.Now}");
                     Console.WriteLine($"Expiry Time3:{redisExpiryModel?.Expiry}");
-                    await socket.SendAsync(Encoding.UTF8.GetBytes("$-1\r\n"), SocketFlags.None);
+                    await socket.SendAsync(Encoding.UTF8.GetBytes(bulkString), SocketFlags.None);
                 }
                 else if(redisExpiryModel?.Expiry!=null && DateTime.Now<redisExpiryModel?.Expiry)
                 {
