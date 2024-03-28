@@ -91,7 +91,7 @@ async void HandleMultipleConnection(Socket socket)
                 }
                 else if (redisExpiryModel?.Expiry != null && redisExpiryModel?.Expiry < DateTime.Now)
                 {
-                    await socket.SendAsync(Encoding.UTF8.GetBytes(bulkString), SocketFlags.None);
+                    await socket.SendAsync(Encoding.UTF8.GetBytes("$-1\r\n"), SocketFlags.None);
                 }
                 else
                 {
