@@ -23,7 +23,8 @@ while(true){
 
 async void HandleMultipleConnection(Socket socket){
     try{
-        byte[] buffer = new byte[1024];
+       while(true){
+         byte[] buffer = new byte[1024];
         int byteRead = await socket.ReceiveAsync(buffer,SocketFlags.None);
         string req = Encoding.UTF8.GetString(buffer,0,byteRead);
         List<string> command = RedisReqParser(req);
@@ -39,6 +40,7 @@ async void HandleMultipleConnection(Socket socket){
             string eTxt = $"+{command[1]}\r\n";
             await socket.SendAsync(Encoding.UTF8.GetBytes(eTxt),SocketFlags.None);
         }
+       }
         
     }catch(Exception ex){
         Console.WriteLine("Error handling cient: "+ex.Message);
