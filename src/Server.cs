@@ -12,6 +12,7 @@ string role="master";
 if(args.Length == 2 && args[0].ToLower() == "--port"){
         port = int.Parse(args[1]);
 }else if (args.Length == 5 && args[2].ToLower() == "--replicaof"){
+    port = int.Parse(args[4]);
     role = "slave";
 }
 TcpListener server = new(IPAddress.Any, port);
