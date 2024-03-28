@@ -96,6 +96,8 @@ async void HandleMultipleConnection(Socket socket)
                 }
                 else if(redisExpiryModel?.Expiry!=null && DateTime.Now<redisExpiryModel?.Expiry)
                 {
+                    Console.WriteLine($"Current Time:{DateTime.Now}");
+                    Console.WriteLine($"Expiry Time:{redisExpiryModel?.Expiry}");
                     string? cValue = redisExpiryModel?.Value;
                     getStr.Append(cValue?.Length);
                     getStr.Append("\r\n");
