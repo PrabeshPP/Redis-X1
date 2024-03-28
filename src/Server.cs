@@ -11,6 +11,9 @@ TcpListener server = new (IPAddress.Any, 6379);
 server.Start();
 
 string pongResponse = "+PONG\r\n";
+string okResponse = "+OK\r\n";
+
+Dictionary<string,string> strDict = new Dictionary<string, string>();
 
 
 while(true){
@@ -39,6 +42,18 @@ async void HandleMultipleConnection(Socket socket){
         }else if(cmd == "echo"){
             string eTxt = $"+{command[1]}\r\n";
             await socket.SendAsync(Encoding.UTF8.GetBytes(eTxt),SocketFlags.None);
+        }else if(cmd == "set"){
+            string key = command[1];
+            string value = command[2];
+            strDict.Add(key,value);
+            await socket.SendAsync(Encoding.UTF8.GetBytes(okResponse),SocketFlags.None);
+        }else if(cmd == "get"){
+            string key = command[1];
+            string value = strDict[key];
+            string eTxt = $"+{value}\r\n";
+            await socket.SendAsync(Encoding.UTF8.GetBytes(value),SocketFlags.None);
+        }else{
+            await socket.SendAsync(Encoding.UTF8.GetBytes("Command Not Found"),SocketFlags.None);
         }
        }
         
