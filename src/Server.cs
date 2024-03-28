@@ -10,7 +10,7 @@ Console.WriteLine("Logs from your program will appear here!");
 TcpListener server = new (IPAddress.Any, 6379);
 server.Start();
 
-string responseTxt = "+PONG\r\n";
+string pongResponse = "+PONG\r\n";
 
 
 while(true){
@@ -34,15 +34,12 @@ async void HandleMultipleConnection(Socket socket){
         string cmd = command[0].ToLower();
 
         if(cmd == "ping"){
-            await socket.SendAsync(Encoding.UTF8.GetBytes(responseTxt),SocketFlags.None);
+            await socket.SendAsync(Encoding.UTF8.GetBytes(pongResponse),SocketFlags.None);
         }else if(cmd == "echo"){
-            string eTxt = $"{command[1].Length}\r\n"+command[1]+"\r\n";
+            string eTxt = $"+{command[1]}\r\n";
             await socket.SendAsync(Encoding.UTF8.GetBytes(eTxt),SocketFlags.None);
         }
         
-
-        socket.Shutdown(SocketShutdown.Both);
-        socket.Close();
     }catch(Exception ex){
         Console.WriteLine("Error handling cient: "+ex.Message);
     }
