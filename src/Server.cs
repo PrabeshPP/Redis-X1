@@ -89,11 +89,11 @@ async void HandleMultipleConnection(Socket socket)
                     getStr.Append("\r\n");
                     await socket.SendAsync(Encoding.UTF8.GetBytes(getStr.ToString()), SocketFlags.None);
                 }
-                else if (redisExpiryModel?.Expiry != null && redisExpiryModel?.Expiry < DateTime.Now)
+                else if (redisExpiryModel?.Expiry != null && DateTime.Now>redisExpiryModel?.Expiry )
                 {
                     await socket.SendAsync(Encoding.UTF8.GetBytes("$-1\r\n"), SocketFlags.None);
                 }
-                else
+                else if(redisExpiryModel?.Expiry!=null && DateTime.Now<redisExpiryModel?.Expiry)
                 {
                     string? cValue = redisExpiryModel?.Value;
                     getStr.Append(cValue?.Length);
