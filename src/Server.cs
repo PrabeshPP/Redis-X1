@@ -13,6 +13,7 @@ server.Start();
 string pongResponse = "+PONG\r\n";
 string okResponse = "+OK\r\n";
 
+
 Dictionary<string,string> strDict = new Dictionary<string, string>();
 
 
@@ -48,10 +49,14 @@ async void HandleMultipleConnection(Socket socket){
             strDict.Add(key,value);
             await socket.SendAsync(Encoding.UTF8.GetBytes(okResponse),SocketFlags.None);
         }else if(cmd == "get"){
+            StringBuilder getStr = new StringBuilder("$");
             string key = command[1];
             string value = strDict[key];
-            string eTxt = $"+{value}\r\n";
-            await socket.SendAsync(Encoding.UTF8.GetBytes(value),SocketFlags.None);
+            getStr.Append(value.Length);
+            getStr.Append("\r\n");
+            getStr.Append(value);
+            getStr.Append("\r\n");
+            await socket.SendAsync(Encoding.UTF8.GetBytes(getStr.ToString()),SocketFlags.None);
         }else{
             await socket.SendAsync(Encoding.UTF8.GetBytes("Command Not Found"),SocketFlags.None);
         }
