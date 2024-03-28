@@ -8,8 +8,11 @@ Console.WriteLine("Logs from your program will appear here!");
 
 // Uncomment this block to pass the first stage
 int port = 6379;
+string role="master";
 if(args.Length == 2 && args[0].ToLower() == "--port"){
         port = int.Parse(args[1]);
+}else if (args.Length == 5 && args[2].ToLower() == "--replicaof"){
+    role = "slave";
 }
 TcpListener server = new(IPAddress.Any, port);
 server.Start();
@@ -110,7 +113,7 @@ async void HandleMultipleConnection(Socket socket)
                 }
 
             }else if(cmd == "info"){
-                string infoStr = $"$11\r\nrole:master\r\n";
+                string infoStr = $"$11\r\nrole:{role}\r\n";
                 await socket.SendAsync(Encoding.UTF8.GetBytes(infoStr),SocketFlags.None);
             }
             else
