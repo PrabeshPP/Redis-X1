@@ -79,10 +79,14 @@ async void HandleMultipleConnection(Socket socket)
                 RedisExpiryModel? redisExpiryModel = strDict[key];
                 if (redisExpiryModel == null)
                 {
+                    Console.WriteLine($"Current Time1:{DateTime.Now}");
+                    Console.WriteLine($"Expiry Time1:{redisExpiryModel?.Expiry}");
                     await socket.SendAsync(Encoding.UTF8.GetBytes(bulkString), SocketFlags.None);
                 }
                 else if (redisExpiryModel?.Expiry == null)
                 {
+                    Console.WriteLine($"Current Time2:{DateTime.Now}");
+                    Console.WriteLine($"Expiry Time2:{redisExpiryModel?.Expiry}");
                     string? cValue = redisExpiryModel?.Value;
                     getStr.Append(cValue?.Length);
                     getStr.Append("\r\n");
@@ -92,12 +96,14 @@ async void HandleMultipleConnection(Socket socket)
                 }
                 else if (redisExpiryModel?.Expiry != null && DateTime.Now>redisExpiryModel?.Expiry )
                 {
+                    Console.WriteLine($"Current Time3:{DateTime.Now}");
+                    Console.WriteLine($"Expiry Time3:{redisExpiryModel?.Expiry}");
                     await socket.SendAsync(Encoding.UTF8.GetBytes("$-1\r\n"), SocketFlags.None);
                 }
                 else if(redisExpiryModel?.Expiry!=null && DateTime.Now<redisExpiryModel?.Expiry)
                 {
-                    Console.WriteLine($"Current Time:{DateTime.Now}");
-                    Console.WriteLine($"Expiry Time:{redisExpiryModel?.Expiry}");
+                    Console.WriteLine($"Current Time4:{DateTime.Now}");
+                    Console.WriteLine($"Expiry Time4:{redisExpiryModel?.Expiry}");
                     string? cValue = redisExpiryModel?.Value;
                     getStr.Append(cValue?.Length);
                     getStr.Append("\r\n");
