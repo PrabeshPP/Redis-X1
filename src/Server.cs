@@ -59,7 +59,8 @@ async void HandleMultipleConnection(Socket socket)
                 string value = command[2];
                 if (cmd.Length > 3)
                 {
-                    DateTime _expiryValue = DateTime.Now.AddMilliseconds(int.Parse(command[4]));
+                    int timeOut = int.Parse(command[4]);
+                    DateTime _expiryValue = DateTime.Now.AddMilliseconds(timeOut-1);
                     RedisExpiryModel redisExpiryModel = new RedisExpiryModel(value, _expiryValue);
                     strDict.Add(key, redisExpiryModel);
                 }
