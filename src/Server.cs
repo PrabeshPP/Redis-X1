@@ -7,7 +7,11 @@ using System.Text;
 Console.WriteLine("Logs from your program will appear here!");
 
 // Uncomment this block to pass the first stage
-TcpListener server = new(IPAddress.Any, 6379);
+int port = 6379;
+if(args.Length == 2 && args[0].ToLower() == "--port"){
+        port = int.Parse(args[1]);
+}
+TcpListener server = new(IPAddress.Any, port);
 server.Start();
 
 string pongResponse = "+PONG\r\n";
@@ -80,14 +84,10 @@ async void HandleMultipleConnection(Socket socket)
                 RedisExpiryModel? redisExpiryModel = strDict[key];
                 if (redisExpiryModel == null)
                 {
-                    Console.WriteLine($"Current Time1:{DateTime.Now}");
-                    Console.WriteLine($"Expiry Time1:{redisExpiryModel?.Expiry}");
                     await socket.SendAsync(Encoding.UTF8.GetBytes(bulkString), SocketFlags.None);
                 }
                 else if (redisExpiryModel?.Expiry == null)
                 {
-                    Console.WriteLine($"Current Time2:{DateTime.Now}");
-                    Console.WriteLine($"Expiry Time2:{redisExpiryModel?.Expiry}");
                     string? cValue = redisExpiryModel?.Value;
                     getStr.Append(cValue?.Length);
                     getStr.Append("\r\n");
@@ -97,14 +97,10 @@ async void HandleMultipleConnection(Socket socket)
                 }
                 else if (redisExpiryModel?.Expiry != null && DateTime.Now>redisExpiryModel?.Expiry )
                 {
-                    Console.WriteLine($"Current Time3:{DateTime.Now}");
-                    Console.WriteLine($"Expiry Time3:{redisExpiryModel?.Expiry}");
                     await socket.SendAsync(Encoding.UTF8.GetBytes(bulkString), SocketFlags.None);
                 }
                 else if(redisExpiryModel?.Expiry!=null && DateTime.Now<redisExpiryModel?.Expiry)
                 {
-                    Console.WriteLine($"Current Time4:{DateTime.Now}");
-                    Console.WriteLine($"Expiry Time4:{redisExpiryModel?.Expiry}");
                     string? cValue = redisExpiryModel?.Value;
                     getStr.Append(cValue?.Length);
                     getStr.Append("\r\n");
@@ -140,12 +136,6 @@ List<string> RedisReqParser(string request)
     int length = int.Parse(strList[0][1..]);
     return strList.Skip(1).Take(length * 2).Where(x => !x.StartsWith("$")).ToList();
 }
-
-//transforming the redis expiry time
-// string Transform(RedisExpiryModel redisExpiryModel){
-//     if(redisExpiryModel.Expiry!=null && )
-//     return "";
-// }
 
 
 //defining struct for the expiry time
