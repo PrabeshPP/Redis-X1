@@ -153,7 +153,7 @@ public class RedisClone
                     }
 
                 }
-                else if (cmd == "info")
+                else if (cmd == "info" && command.Contains("replication"))
                 {
                     string infoStr = $"$11\r\nrole:{Role}\r\n";
                     await socket.SendAsync(Encoding.UTF8.GetBytes(infoStr), SocketFlags.None);
@@ -169,6 +169,12 @@ public class RedisClone
         {
             Console.WriteLine("Error handling cient: " + ex.Message);
         }
+        finally
+        {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
+        }
+
     }
 
 
