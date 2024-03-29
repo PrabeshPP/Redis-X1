@@ -163,10 +163,10 @@ public class RedisClone
                     }
 
                 }
-                else if (cmd == "info" && command.Contains("replication"))
+                else if (cmd == "info")
                 {
                     StringBuilder infoStr = new StringBuilder("$");
-                    infoStr.Append(Role?.Length);
+                    infoStr.Append(Role?.Length+5);
                     infoStr.Append("\r\n");
                     infoStr.Append("role:");
                     infoStr.Append(Role);
