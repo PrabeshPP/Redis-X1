@@ -36,7 +36,8 @@ public class RedisClone
         while (true)
         {
             Socket socket = await server.AcceptSocketAsync();
-            await Task.Run(() => HandleMultipleConnection(socket));
+            Thread thread = new Thread(()=>HandleMultipleConnection(socket));
+            thread.Start();
         }
     }
 
@@ -66,7 +67,7 @@ public class RedisClone
     {
         try
         {
-            while (true)
+            while (socket.Connected)
             {
                 byte[] buffer = new byte[1024];
                 int byteRead = await socket.ReceiveAsync(buffer, SocketFlags.None);
