@@ -165,12 +165,17 @@ public class RedisClone
                 }
                 else if (cmd == "info")
                 {
-                    Console.WriteLine($"Command-1 {command[1]}");
                     StringBuilder infoStr = new StringBuilder("$");
                     infoStr.Append(Role?.Length+5);
                     infoStr.Append("\r\n");
                     infoStr.Append("role:");
                     infoStr.Append(Role);
+                    infoStr.Append("\r\n");
+                    infoStr.Append("master_replid:");
+                    infoStr.Append("8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb");
+                    infoStr.Append("\r\n");
+                    infoStr.Append("master_repl_offset:");
+                    infoStr.Append("0");
                     infoStr.Append("\r\n");
                     await socket.SendAsync(Encoding.UTF8.GetBytes(infoStr.ToString()), SocketFlags.None);
                 }
