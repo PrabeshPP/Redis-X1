@@ -165,19 +165,12 @@ public class RedisClone
                 }
                 else if (cmd == "info")
                 {
-                    StringBuilder infoStr = new StringBuilder("$");
-                    infoStr.Append(Role?.Length+5);
-                    infoStr.Append("\r\n");
-                    infoStr.Append("role:");
-                    infoStr.Append(Role);
-                    infoStr.Append("\r\n");
-                    infoStr.Append("master_replid:");
-                    infoStr.Append("8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb");
-                    infoStr.Append("\r\n");
-                    infoStr.Append("master_repl_offset:");
-                    infoStr.Append("0");
-                    infoStr.Append("\r\n");
-                    await socket.SendAsync(Encoding.UTF8.GetBytes(infoStr.ToString()), SocketFlags.None);
+                    Dictionary<string,string> values = new Dictionary<string, string>() {
+                                { "role", Role },
+                                { "master_replid", "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb" },
+                                { "master_repl_offset", "0" },};
+                    string infoStr = string.Join('\n', values.Select(x => $"{x.Key}:{x.Value}"));
+                    await socket.SendAsync(Encoding.UTF8.GetBytes($"${infoStr.Length}\r\n{infoStr}\r\n"), SocketFlags.None);
                 }
                 else
                 {
@@ -192,6 +185,9 @@ public class RedisClone
         }
 
     }
+
+
+
 
 
 }
