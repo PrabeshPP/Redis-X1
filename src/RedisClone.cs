@@ -32,12 +32,23 @@ public class RedisClone
     public async Task Run()
     {
         TcpListener server = new(IPAddress.Any, m_port);
-        server.Start();
-        while (true)
+        try
         {
-            Socket socket = await server.AcceptSocketAsync();
-            Thread thread = new Thread(()=>HandleMultipleConnection(socket));
-            thread.Start();
+            server.Start();
+            while (true)
+            {
+                Socket socket = server.AcceptSocket(); // wait for client
+                Thread newThread = new Thread(() => HandleMultipleConnection(socket));
+                newThread.Start();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception! Message - ${ex.Message}");
+        }
+        finally
+        {
+            server.Stop();
         }
     }
 
