@@ -165,6 +165,7 @@ public class RedisClone
                 }
                 else if (cmd == "info")
                 {
+                    Console.WriteLine($"Command-1 {command[1]}");
                     StringBuilder infoStr = new StringBuilder("$");
                     infoStr.Append(Role?.Length+5);
                     infoStr.Append("\r\n");
