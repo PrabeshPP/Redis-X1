@@ -53,7 +53,7 @@ public class RedisClone
 
     private (string? host, int? port) GetReplicaOf(string[] args)
     {
-        if (args.Length >= 2 && args[2].ToLower() == "--replicaof")
+        if (args.Length > 2 && args[2].ToLower() == "--replicaof")
         {
             return (args[3], int.Parse(args[4]));
         }
