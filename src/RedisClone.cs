@@ -54,20 +54,30 @@ public class RedisClone
 
     private int GetPortOrDefault(string[] args)
     {
-        if (args.Length == 2 && args[0].ToLower() == "--port")
+        var i = Array.FindIndex(
+        args, 0, s => s.Equals("--port", StringComparison.OrdinalIgnoreCase));
+        if (i >= 0 && i + 1 <= args.Length)
         {
-            return int.Parse(args[1]);
+            if (int.TryParse(args[i + 1], out var o))
+            {
+                return o;
+            }
         }
-
         return 6379;
     }
 
 
     private (string? host, int? port) GetReplicaOf(string[] args)
     {
-        if (args.Length > 2 && args[2].ToLower() == "--replicaof")
+        var i = Array.FindIndex(
+        args, 0,
+        s => s.Equals("--replicaof", StringComparison.OrdinalIgnoreCase));
+        if (i >= 0 && i + 2 <= args.Length)
         {
-            return (args[3], int.Parse(args[4]));
+            if (int.TryParse(args[i + 2], out var o))
+            {
+                return (args[i + 1], o);
+            }
         }
         return (null, null);
     }
