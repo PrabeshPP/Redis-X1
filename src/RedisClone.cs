@@ -29,7 +29,7 @@ public class RedisClone
         }
     }
 
-    public async Task Run()
+    public void Run()
     {
         TcpListener server = new(IPAddress.Any, m_port);
         try
