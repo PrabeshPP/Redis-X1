@@ -29,8 +29,14 @@ public class RedisClone
         }
     }
 
-    public void Run()
+    public async void Run()
     {
+        if(m_master_host !=null && m_master_port.HasValue){
+            TcpClient master = new TcpClient(m_master_host,m_master_port.Value);
+            await using var stream = master.GetStream();
+            await using var writer = new StreamWriter(stream);
+            await writer.WriteAsync("*1\r\n$4\r\nping\r\n");
+        }
         TcpListener server = new(IPAddress.Any, m_port);
         try
         {
