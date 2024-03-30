@@ -31,11 +31,32 @@ public class RedisClone
 
     public async void Run()
     {
-        if(m_master_host !=null && m_master_port.HasValue){
-            TcpClient master = new TcpClient(m_master_host,m_master_port.Value);
+        if (m_master_host != null && m_master_port.HasValue)
+        {
+            TcpClient master = new TcpClient(m_master_host, m_master_port.Value);
             await using var stream = master.GetStream();
             await using var writer = new StreamWriter(stream);
             await writer.WriteAsync("*1\r\n$4\r\nping\r\n");
+
+            string listeningPortCommand = "*3\r\n$8\r\nREPLCONF\r\n$14\r\nlistening-port\r\n$" + m_port.ToString().Length + "\r\n" + m_port + "\r\n";
+            string capabilityCommand = "*3\r\n$8\r\nREPLCONF\r\n$4\r\ncapa\r\n$6\r\npsync2\r\n";
+
+            // Step 2: Send REPLCONF commands
+            await writer.WriteAsync(listeningPortCommand);
+            await writer.WriteAsync(capabilityCommand);
+
+            // Step 3: Handle Master's Response
+            byte[] responseBuffer = new byte[1024];
+            await stream.ReadAsync(responseBuffer, 0, responseBuffer.Length);
+            string response = Encoding.UTF8.GetString(responseBuffer);
+            if (response.Trim() == "+OK\r\n+OK\r\n")
+            {
+                Console.WriteLine("Handshake completed successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Handshake failed. Master's response: " + response);
+            }
         }
         TcpListener server = new(IPAddress.Any, m_port);
         try
@@ -171,7 +192,7 @@ public class RedisClone
                 }
                 else if (cmd == "info")
                 {
-                    Dictionary<string,string> values = new Dictionary<string, string>() {
+                    Dictionary<string, string> values = new Dictionary<string, string>() {
                                 { "role", Role },
                                 { "master_replid", "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb" },
                                 { "master_repl_offset", "0" },};
